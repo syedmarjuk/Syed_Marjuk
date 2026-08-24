@@ -1,0 +1,52 @@
+# ============================================================
+#  Netlify configuration
+#  This site is plain HTML/CSS/JS — there is nothing to build.
+# ============================================================
+
+[build]
+  # Everything in the repo root is published as-is.
+  publish = "."
+  # No build command: static files only.
+  command = ""
+
+# ---------- Security + caching headers ----------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# Long cache for fingerprint-free static assets.
+# If you change style.css or main.js and the browser shows the old
+# version, do a hard refresh (Ctrl+Shift+R) — or bump the ?v= number
+# in the <link> / <script> tags.
+[[headers]]
+  for = "/assets/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/assets/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/assets/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+# HTML should always be revalidated so edits appear immediately.
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# ---------- Pretty URLs ----------
+# /models  ->  /models/index.html   (handled automatically)
+# Add redirects here if you ever rename a page, e.g.
+# [[redirects]]
+#   from = "/old-page"
+#   to = "/new-page"
+#   status = 301

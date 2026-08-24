@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acartia steueri Reproduction Optimiser — M. Syed Marjuk</title>
+<meta name="description" content="Live dual neural network predicting egg and naupliar production rate of the marine copepod Acartia steueri from temperature, salinity and pH. fitnet 3-10-2 regression (R² 0.9179) plus patternnet 3-10-3 production-tier classifier. Runs entirely in your browser.">
+<link rel="canonical" href="https://syedmarjuk.netlify.app/models/acartia-optimiser.html">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Acartia steueri Reproduction Optimiser — live neural network">
+<meta property="og:description" content="Predict copepod egg and nauplii production from temperature, salinity and pH. R² 0.9179. Runs in your browser.">
+<meta property="og:image" content="https://syedmarjuk.netlify.app/assets/img/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<meta name="theme-color" content="#0A1120" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F6F9FC" media="(prefers-color-scheme: light)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='25' x='2' font-size='24'%3E%F0%9F%94%AC%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="ic-plankton" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4.5"/><path d="M12 7.5V3"/><path d="M12 16.5V21"/>
+    <path d="M7.5 12H3"/><path d="M16.5 12H21"/><path d="m8.8 8.8-3-3"/>
+    <path d="m15.2 15.2 3 3"/><path d="m15.2 8.8 3-3"/><path d="m8.8 15.2-3 3"/>
+    <circle cx="12" cy="12" r="1.5"/>
+  </symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></symbol>
+  <symbol id="ic-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="ic-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></symbol>
+  <symbol id="ic-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></symbol>
+  <symbol id="ic-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.3 17.7-1.4 1.4"/><path d="m19.1 4.9-1.4 1.4"/></symbol>
+  <symbol id="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></symbol>
+  <symbol id="ic-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></symbol>
+  <symbol id="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+</svg>
+
+
+<header class="nav is-scrolled" id="nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="brand" aria-label="M. Syed Marjuk — home">
+      <svg class="brand-mark" aria-hidden="true"><use href="#ic-plankton"></use></svg>
+      <span>M. Syed Marjuk<small>Marine · Remote Sensing · AI</small></span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+      <a href="../index.html#about">About</a>
+      <a href="../index.html#publications">Publications</a>
+      <a href="index.html" class="is-active">Models</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to light theme">
+        <svg aria-hidden="true"><use href="#ic-sun" id="themeIcon"></use></svg>
+      </button>
+      <button class="icon-btn nav-toggle" id="navToggle" type="button"
+              aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+        <svg aria-hidden="true"><use href="#ic-menu" id="navToggleIcon"></use></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+<main id="main">
+
+<!-- ============ HEADER ============ -->
+<section class="section depth-1" style="padding-top:calc(68px + var(--s-7));padding-bottom:var(--s-6)">
+  <div class="wrap">
+    <a class="btn btn-quiet" href="index.html" style="margin-bottom:var(--s-4);padding-left:0">
+      <svg aria-hidden="true"><use href="#ic-back"></use></svg> All models
+    </a>
+
+    <p class="eyebrow">Model 01 · Dual artificial neural network</p>
+    <h1 style="font-size:clamp(1.75rem,4.4vw,2.9rem);margin-bottom:var(--s-4)">
+      <em class="sci">Acartia steueri</em> reproduction optimiser
+    </h1>
+    <p class="lead">
+      A <strong style="color:var(--fg-soft)">fitnet 3-10-2</strong> regression predicts egg
+      and naupliar production rate from temperature, salinity and pH. A companion
+      <strong style="color:var(--fg-soft)">patternnet 3-10-3</strong> classifier grades the
+      production tier. Both networks run entirely in your browser — nothing is sent anywhere.
+    </p>
+
+    <dl class="metrics" style="margin-top:var(--s-6)">
+      <div class="metric">
+        <dd class="metric-num">0.918</dd>
+        <dt class="metric-label">R² Regression</dt>
+      </div>
+      <div class="metric">
+        <dd class="metric-num">3-10-2</dd>
+        <dt class="metric-label">fitnet</dt>
+      </div>
+      <div class="metric">
+        <dd class="metric-num">3-10-3</dd>
+        <dt class="metric-label">patternnet</dt>
+      </div>
+      <div class="metric">
+        <dd class="metric-num">2025</dd>
+        <dt class="metric-label">Aquaculture</dt>
+      </div>
+    </dl>
+  </div>
+</section>
+
+
+<!-- ============ LIVE CONSOLE ============ -->
+<section class="section depth-2" style="padding-top:var(--s-6)">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Live prediction</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">Set the culture conditions</h2>
+      <p class="lead">
+        Move the sliders. Both networks re-evaluate on every change, and the response
+        surface below redraws around your current point.
+      </p>
+    </div>
+
+    <div class="console">
+
+      <!-- ---- controls ---- -->
+      <div>
+        <div class="panel">
+          <p class="panel-title">Input parameters</p>
+
+          <div class="ctrl">
+            <div class="ctrl-head">
+              <label class="ctrl-label" for="inTemp">Temperature<small>Water temperature</small></label>
+              <output class="ctrl-val" id="outTemp" for="inTemp">28.0 °C</output>
+            </div>
+            <input type="range" id="inTemp" min="15" max="35" step="0.1" value="28"
+                   aria-describedby="scaleTemp">
+            <div class="ctrl-scale" id="scaleTemp"><span>15 °C</span><span>35 °C</span></div>
+          </div>
+
+          <div class="ctrl">
+            <div class="ctrl-head">
+              <label class="ctrl-label" for="inSal">Salinity<small>Practical salinity units</small></label>
+              <output class="ctrl-val" id="outSal" for="inSal">30.0 PSU</output>
+            </div>
+            <input type="range" id="inSal" min="26" max="34" step="0.1" value="30"
+                   aria-describedby="scaleSal">
+            <div class="ctrl-scale" id="scaleSal"><span>26 PSU</span><span>34 PSU</span></div>
+          </div>
+
+          <div class="ctrl">
+            <div class="ctrl-head">
+              <label class="ctrl-label" for="inPh">pH<small>Culture medium pH</small></label>
+              <output class="ctrl-val" id="outPh" for="inPh">7.50</output>
+            </div>
+            <input type="range" id="inPh" min="6.5" max="9" step="0.01" value="7.5"
+                   aria-describedby="scalePh">
+            <div class="ctrl-scale" id="scalePh"><span>6.5</span><span>9.0</span></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">Optimiser</p>
+          <p style="font-size:.8125rem;color:var(--fg-muted);margin-bottom:var(--s-4)">
+            Search the full valid parameter space for the conditions that maximise output.
+          </p>
+          <div class="seg" role="group" aria-label="Optimisation target" style="margin-bottom:var(--s-4)">
+            <button type="button" data-target="epr"  aria-pressed="true">Max EPR</button>
+            <button type="button" data-target="npr"  aria-pressed="false">Max NPR</button>
+            <button type="button" data-target="both" aria-pressed="false">Balanced</button>
+          </div>
+          <button class="btn btn-primary" id="btnOptimise" type="button" style="width:100%">
+            <svg aria-hidden="true"><use href="#ic-target"></use></svg>
+            Find optimum
+          </button>
+          <button class="btn btn-ghost" id="btnReset" type="button" style="width:100%;margin-top:var(--s-2)">
+            <svg aria-hidden="true"><use href="#ic-reset"></use></svg>
+            Reset
+          </button>
+          <p class="mono" id="optStatus" role="status" aria-live="polite"
+             style="margin-top:var(--s-3);color:var(--fg-faint);font-size:.6875rem"></p>
+        </div>
+      </div>
+
+      <!-- ---- outputs ---- -->
+      <div>
+        <dl class="readouts">
+          <div class="readout">
+            <dt>Egg production rate</dt>
+            <dd><span id="valEpr">0.00</span><span class="unit">eggs / ♀ / day</span></dd>
+          </div>
+          <div class="readout alt">
+            <dt>Naupliar production rate</dt>
+            <dd><span id="valNpr">0.00</span><span class="unit">nauplii / ♀ / day</span></dd>
+          </div>
+        </dl>
+
+        <div class="panel">
+          <p class="panel-title">Production tier — patternnet classifier</p>
+          <div class="tier">
+            <span class="tier-badge tier-High" id="tierBadge">
+              <span class="dot" style="background:currentColor;box-shadow:none"></span>
+              <span id="tierText">High</span>
+            </span>
+            <span class="mono" style="color:var(--fg-faint);font-size:.6875rem" id="tierConf"></span>
+          </div>
+          <div class="prob-list" id="probList"></div>
+        </div>
+
+        <div class="panel">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--s-3);margin-bottom:var(--s-4)">
+            <p class="panel-title" style="margin:0">Response surface</p>
+            <div class="seg" role="group" aria-label="Surface output">
+              <button type="button" data-surf="epr" aria-pressed="true">EPR</button>
+              <button type="button" data-surf="npr" aria-pressed="false">NPR</button>
+            </div>
+          </div>
+
+          <div class="field-wrap">
+            <canvas class="field-canvas" id="fieldCanvas"
+                    role="img" aria-label="Heat map of predicted production across temperature and salinity, with a marker at the current setting"></canvas>
+          </div>
+          <p class="axis-x">Temperature 15 → 35 °C &nbsp;·&nbsp; Salinity 26 (bottom) → 34 PSU (top)</p>
+
+          <div class="legend-ramp">
+            <span id="rampMin">low</span>
+            <span class="ramp-bar" id="rampBar"></span>
+            <span id="rampMax">high</span>
+          </div>
+
+          <p class="mono" style="margin-top:var(--s-3);color:var(--fg-faint);font-size:.6875rem">
+            Surface computed at the current pH (<span id="surfPh">7.50</span>). The ring marks your setting.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <svg aria-hidden="true"><use href="#ic-info"></use></svg>
+      <p>
+        The networks were trained on culture data within 15–35 °C, 26–34 PSU and pH 6.5–9.
+        Predictions at the extreme corners of that box are extrapolations and can fall below
+        zero, which is not physically meaningful — those values are clamped to zero here.
+        Treat the surface as a guide to the response shape, not as a substitute for
+        experimental validation.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ ARCHITECTURE ============ -->
+<section class="section depth-2">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Architecture</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">How the networks are wired</h2>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <p class="panel-title">fitnet 3-10-2 — regression</p>
+        <div class="arch" style="margin-bottom:var(--s-4)">
+          <div class="arch-layer"><b>3</b><span>Input<br>T · S · pH</span></div>
+          <span class="arch-arrow"><svg aria-hidden="true"><use href="#ic-arrow"></use></svg></span>
+          <div class="arch-layer"><b>10</b><span>Hidden<br>tansig</span></div>
+          <span class="arch-arrow"><svg aria-hidden="true"><use href="#ic-arrow"></use></svg></span>
+          <div class="arch-layer"><b>2</b><span>Output<br>EPR · NPR</span></div>
+        </div>
+        <ul class="tick-list">
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Inputs normalised with MATLAB <code class="mono">mapminmax</code> to the range −1…1</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Ten hyperbolic-tangent sigmoid hidden neurons</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Linear output layer, then reverse-mapped to real units</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Coefficient of determination R² = 0.9179</span></li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <p class="panel-title">patternnet 3-10-3 — classification</p>
+        <div class="arch" style="margin-bottom:var(--s-4)">
+          <div class="arch-layer"><b>3</b><span>Input<br>T · S · pH</span></div>
+          <span class="arch-arrow"><svg aria-hidden="true"><use href="#ic-arrow"></use></svg></span>
+          <div class="arch-layer"><b>10</b><span>Hidden<br>tansig</span></div>
+          <span class="arch-arrow"><svg aria-hidden="true"><use href="#ic-arrow"></use></svg></span>
+          <div class="arch-layer"><b>3</b><span>Softmax<br>Low·Med·High</span></div>
+        </div>
+        <ul class="tick-list">
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Shares the same input normalisation as the regression network</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Softmax output gives a probability per production tier</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Reported tier is the highest-probability class</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Useful as a fast screen before committing culture resources</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ METHOD ============ -->
+<section class="section depth-2">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Method</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">From culture vessel to network</h2>
+    </div>
+
+    <div class="grid-focus stagger">
+      <article class="card">
+        <h3 style="font-size:1rem">1 · Culture experiments</h3>
+        <p>Systematic factorial trials on <em class="sci">Acartia steueri</em> across
+           controlled temperature, salinity and pH combinations in the Marine Planktonology
+           &amp; Aquaculture Laboratory.</p>
+      </article>
+      <article class="card">
+        <h3 style="font-size:1rem">2 · Reproductive counts</h3>
+        <p>Egg production rate and naupliar production rate enumerated per female per day
+           under stereo zoom microscopy, with replicate cohorts per treatment.</p>
+      </article>
+      <article class="card">
+        <h3 style="font-size:1rem">3 · Network training</h3>
+        <p>Levenberg–Marquardt training of a ten-neuron fitnet, selected on validation R²;
+           a parallel patternnet trained on tiered production labels.</p>
+      </article>
+      <article class="card">
+        <h3 style="font-size:1rem">4 · Optimisation</h3>
+        <p>The trained surface is searched for the parameter combination maximising output —
+           the basis for the live optimiser on this page.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ CITATION ============ -->
+<section class="section depth-3">
+  <div class="wrap">
+    <div class="contact-card">
+      <p class="eyebrow" style="justify-content:center">Citation</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">Cite this model</h2>
+      <p class="lead" style="margin-bottom:var(--s-5)">
+        This network is published open-access in <em>Aquaculture</em>.
+      </p>
+      <p class="mono" style="text-align:left;max-width:76ch;margin:0 auto var(--s-5);padding:var(--s-4);
+                background:var(--surface);border:1px solid var(--border);
+                border-radius:var(--radius-sm);color:var(--fg-soft);overflow-wrap:anywhere;line-height:1.7">
+        Marjuk, M. S., Sridhar, P., Gowthami, A., Santhanam, P., Sarangi, R. K., &amp;
+        Perumal, P. (2025). Systematic optimization and neural network modelling of
+        <em>Acartia steueri</em> copepod reproduction for enhanced live feed solutions in
+        sustainable aquaculture. <em>Aquaculture</em>, 743482.
+      </p>
+      <div class="contact-links">
+        <a class="link-tile" href="https://doi.org/10.1016/j.aquaculture.2025.743482"
+           target="_blank" rel="noopener noreferrer">
+          <svg aria-hidden="true"><use href="#ic-ext"></use></svg>
+          <span class="tile-txt"><small>Publisher</small>Read the paper</span>
+        </a>
+        <a class="link-tile" href="bob-biomass.html">
+          <svg aria-hidden="true"><use href="#ic-arrow"></use></svg>
+          <span class="tile-txt"><small>Next model</small>Biomass estimator</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <p>&copy; <span id="year"></span> M. Syed Marjuk · Built with care</p>
+    <nav class="footer-links" aria-label="Footer navigation">
+      <a href="../index.html">Portfolio</a>
+      <a href="index.html">Models</a>
+      <a href="../index.html#publications">Publications</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/models.js"></script>
+<script src="../assets/js/main.js"></script>
+<script>
+/* ---------- Acartia optimiser page controller ---------- */
+(function () {
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const M = window.MarineModels;
+  if (!M) return;
+
+  const inTemp = $('#inTemp'), inSal = $('#inSal'), inPh = $('#inPh');
+  const canvas = $('#fieldCanvas');
+  let surfMetric = 'epr';
+  let optTarget  = 'epr';
+
+  const clamp0 = v => Math.max(0, v);
+
+  /* fill the slider track behind the thumb */
+  function paintTrack(el) {
+    const pct = ((el.value - el.min) / (el.max - el.min)) * 100;
+    el.style.setProperty('--fill', pct + '%');
+  }
+
+  function readInputs() {
+    return {
+      t: parseFloat(inTemp.value),
+      s: parseFloat(inSal.value),
+      p: parseFloat(inPh.value)
+    };
+  }
+
+  function update() {
+    const { t, s, p } = readInputs();
+
+    $('#outTemp').textContent = t.toFixed(1) + ' °C';
+    $('#outSal').textContent  = s.toFixed(1) + ' PSU';
+    $('#outPh').textContent   = p.toFixed(2);
+    $('#surfPh').textContent  = p.toFixed(2);
+    [inTemp, inSal, inPh].forEach(paintTrack);
+
+    const r = M.regress(t, s, p);
+    $('#valEpr').textContent = clamp0(r.epr).toFixed(2);
+    $('#valNpr').textContent = clamp0(r.npr).toFixed(2);
+
+    const c = M.classify(t, s, p);
+    const badge = $('#tierBadge');
+    badge.className = 'tier-badge tier-' + c.label;
+    $('#tierText').textContent = c.label;
+    $('#tierConf').textContent = (c.probabilities[c.index] * 100).toFixed(0) + '% confidence';
+
+    $('#probList').innerHTML = M.tierLabels.map((lab, i) => `
+      <div class="prob">
+        <span>${lab}</span>
+        <span class="prob-bar"><span style="width:${(c.probabilities[i] * 100).toFixed(1)}%"></span></span>
+        <span class="prob-val">${(c.probabilities[i] * 100).toFixed(0)}%</span>
+      </div>`).join('');
+
+    drawField();
+  }
+
+  /* ---------- response-surface heat map ---------- */
+  function ramp(v) {
+    // v in 0..1 -> deep navy -> teal -> cyan -> pale
+    const stops = [[13, 27, 48], [15, 90, 110], [34, 190, 200], [190, 245, 250]];
+    const x = Math.max(0, Math.min(1, v)) * (stops.length - 1);
+    const i = Math.min(stops.length - 2, Math.floor(x));
+    const f = x - i;
+    const c = [0, 1, 2].map(k => Math.round(stops[i][k] + (stops[i + 1][k] - stops[i][k]) * f));
+    return `rgb(${c[0]},${c[1]},${c[2]})`;
+  }
+
+  function drawField() {
+    if (!canvas) return;
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    if (!w || !h) return;
+
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const { t, s, p } = readInputs();
+    const [t0, t1] = M.ranges.temp;
+    const [s0, s1] = M.ranges.sal;
+
+    const COLS = 68, ROWS = 44;
+    const vals = [];
+    let lo = Infinity, hi = -Infinity;
+
+    for (let j = 0; j < ROWS; j++) {
+      vals[j] = [];
+      const sv = s0 + (s1 - s0) * (j / (ROWS - 1));
+      for (let i = 0; i < COLS; i++) {
+        const tv = t0 + (t1 - t0) * (i / (COLS - 1));
+        const r = M.regress(tv, sv, p);
+        const v = clamp0(surfMetric === 'npr' ? r.npr : r.epr);
+        vals[j][i] = v;
+        if (v < lo) lo = v;
+        if (v > hi) hi = v;
+      }
+    }
+
+    const cw = w / COLS, ch = h / ROWS;
+    const span = (hi - lo) || 1;
+    for (let j = 0; j < ROWS; j++) {
+      for (let i = 0; i < COLS; i++) {
+        ctx.fillStyle = ramp((vals[j][i] - lo) / span);
+        // salinity increases upward, so invert the row index
+        ctx.fillRect(i * cw - 0.5, (ROWS - 1 - j) * ch - 0.5, cw + 1, ch + 1);
+      }
+    }
+
+    // current-point marker
+    const mx = ((t - t0) / (t1 - t0)) * w;
+    const my = (1 - (s - s0) / (s1 - s0)) * h;
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(255,255,255,.95)';
+    ctx.beginPath(); ctx.arc(mx, my, 9, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = 'rgba(0,0,0,.55)';
+    ctx.beginPath(); ctx.arc(mx, my, 11.5, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,.95)';
+    ctx.beginPath(); ctx.arc(mx, my, 2.2, 0, Math.PI * 2); ctx.fill();
+
+    const unit = surfMetric === 'npr' ? 'nauplii' : 'eggs';
+    $('#rampMin').textContent = lo.toFixed(1);
+    $('#rampMax').textContent = hi.toFixed(1) + ' ' + unit;
+    $('#rampBar').style.background =
+      `linear-gradient(90deg, ${ramp(0)}, ${ramp(0.33)}, ${ramp(0.66)}, ${ramp(1)})`;
+
+    canvas.setAttribute('aria-label',
+      `Heat map of predicted ${surfMetric.toUpperCase()} across temperature 15 to 35 degrees ` +
+      `and salinity 26 to 34 PSU at pH ${p.toFixed(2)}. Values range ${lo.toFixed(1)} to ` +
+      `${hi.toFixed(1)}. Current setting ${t.toFixed(1)} degrees, ${s.toFixed(1)} PSU.`);
+  }
+
+  /* ---------- optimiser ---------- */
+  function runOptimise() {
+    const btn = $('#btnOptimise');
+    btn.disabled = true;
+    btn.style.opacity = '.6';
+    $('#optStatus').textContent = 'Searching parameter space…';
+
+    // let the browser paint the disabled state before the sweep
+    requestAnimationFrame(() => setTimeout(() => {
+      const best = M.optimise(optTarget);
+      inTemp.value = best.temp.toFixed(1);
+      inSal.value  = best.sal.toFixed(1);
+      inPh.value   = best.ph.toFixed(2);
+      update();
+      $('#optStatus').textContent =
+        `Optimum · ${best.temp.toFixed(1)} °C · ${best.sal.toFixed(1)} PSU · pH ${best.ph.toFixed(2)}`;
+      btn.disabled = false;
+      btn.style.opacity = '';
+    }, 20));
+  }
+
+  /* ---------- wiring ---------- */
+  [inTemp, inSal, inPh].forEach(el => el.addEventListener('input', update));
+
+  document.querySelectorAll('[data-surf]').forEach(b => {
+    b.addEventListener('click', () => {
+      surfMetric = b.dataset.surf;
+      document.querySelectorAll('[data-surf]').forEach(x =>
+        x.setAttribute('aria-pressed', String(x === b)));
+      drawField();
+    });
+  });
+
+  document.querySelectorAll('[data-target]').forEach(b => {
+    b.addEventListener('click', () => {
+      optTarget = b.dataset.target;
+      document.querySelectorAll('[data-target]').forEach(x =>
+        x.setAttribute('aria-pressed', String(x === b)));
+    });
+  });
+
+  $('#btnOptimise').addEventListener('click', runOptimise);
+  $('#btnReset').addEventListener('click', () => {
+    inTemp.value = 28; inSal.value = 30; inPh.value = 7.5;
+    $('#optStatus').textContent = '';
+    update();
+  });
+
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawField, 160); });
+  document.getElementById('themeBtn').addEventListener('click', () => setTimeout(drawField, 40));
+
+  update();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  MODEL PAGE TEMPLATE
+  ============================================================
+  HOW TO USE THIS FILE
+
+  1. Copy this file and rename it to match your model's "slug"
+     in data.js.  Example:  pbm-predictor.html
+
+  2. Find-and-replace these placeholders:
+       MODEL_NAME        -> e.g. Phytoplankton Biomass Predictor
+       MODEL_SUMMARY     -> one-sentence description
+       MODEL_STATUS      -> live | development | planned
+
+  3. Fill in the sections marked  <!-- EDIT -->
+
+  4. In assets/js/data.js, set that model's
+       url: "pbm-predictor.html"
+       status: "live"
+     so the card on the homepage becomes clickable.
+
+  5. Save, commit, push. Netlify publishes automatically.
+
+  NOTE: files in this folder that start with an underscore are
+  ignored by Netlify's build, so this template never goes live.
+  ============================================================
+-->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MODEL_NAME — M. Syed Marjuk</title>
+<meta name="description" content="MODEL_SUMMARY">
+
+<meta name="theme-color" content="#0A1120" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F6F9FC" media="(prefers-color-scheme: light)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='25' x='2' font-size='24'%3E%F0%9F%94%AC%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="ic-plankton" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4.5"/><path d="M12 7.5V3"/><path d="M12 16.5V21"/>
+    <path d="M7.5 12H3"/><path d="M16.5 12H21"/><path d="m8.8 8.8-3-3"/>
+    <path d="m15.2 15.2 3 3"/><path d="m15.2 8.8 3-3"/><path d="m8.8 15.2-3 3"/>
+    <circle cx="12" cy="12" r="1.5"/>
+  </symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>
+  </symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 6 9 17l-5-5"/>
+  </symbol>
+  <symbol id="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>
+    <path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/>
+    <path d="M20 12h2"/><path d="m6.3 17.7-1.4 1.4"/><path d="m19.1 4.9-1.4 1.4"/>
+  </symbol>
+  <symbol id="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>
+  </symbol>
+  <symbol id="ic-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/>
+  </symbol>
+  <symbol id="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+  </symbol>
+</svg>
+
+
+<header class="nav is-scrolled" id="nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="brand" aria-label="M. Syed Marjuk — home">
+      <svg class="brand-mark" aria-hidden="true"><use href="#ic-plankton"></use></svg>
+      <span>
+        M. Syed Marjuk
+        <small>Marine · Remote Sensing · AI</small>
+      </span>
+    </a>
+
+    <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+      <a href="../index.html#about">About</a>
+      <a href="../index.html#publications">Publications</a>
+      <a href="index.html" class="is-active">Models</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to light theme">
+        <svg aria-hidden="true"><use href="#ic-sun" id="themeIcon"></use></svg>
+      </button>
+      <button class="icon-btn nav-toggle" id="navToggle" type="button"
+              aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+        <svg aria-hidden="true"><use href="#ic-menu" id="navToggleIcon"></use></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+<main id="main">
+
+<!-- ============ HEADER ============ -->
+<section class="section depth-1" style="padding-top:calc(68px + var(--s-7));padding-bottom:var(--s-7)">
+  <div class="wrap">
+    <a class="btn btn-quiet" href="index.html" style="margin-bottom:var(--s-5);padding-left:0">
+      <svg aria-hidden="true"><use href="#ic-back"></use></svg>
+      All models
+    </a>
+
+    <span class="status status-MODEL_STATUS" style="margin-bottom:var(--s-4)">MODEL_STATUS</span>
+
+    <h1 style="font-size:clamp(1.9rem,4.6vw,3rem);margin-bottom:var(--s-4)">MODEL_NAME</h1>
+    <p class="lead">MODEL_SUMMARY</p>
+
+    <!-- EDIT: headline performance numbers -->
+    <dl class="metrics" style="margin-top:var(--s-6)">
+      <div class="metric">
+        <dd class="metric-num">0.00</dd>
+        <dt class="metric-label">R² Score</dt>
+      </div>
+      <div class="metric">
+        <dd class="metric-num">0.00</dd>
+        <dt class="metric-label">RMSE</dt>
+      </div>
+      <div class="metric">
+        <dd class="metric-num">0.00</dd>
+        <dt class="metric-label">MAE</dt>
+      </div>
+      <div class="metric">
+        <dd class="metric-num">0</dd>
+        <dt class="metric-label">Samples</dt>
+      </div>
+    </dl>
+  </div>
+</section>
+
+
+<!-- ============ OVERVIEW ============ -->
+<section class="section depth-2">
+  <div class="wrap">
+    <div class="two-col">
+      <div>
+        <div class="section-head">
+          <p class="eyebrow">Overview</p>
+          <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">What this model does</h2>
+        </div>
+        <!-- EDIT: 2–3 paragraphs describing the model -->
+        <p style="margin-bottom:var(--s-4);color:var(--fg-muted)">
+          Replace this paragraph with a plain-language explanation of what the model
+          predicts, what it takes as input, and why it matters.
+        </p>
+        <p style="color:var(--fg-muted)">
+          Add a second paragraph on the scientific context — the region, the season,
+          the ecological question it answers.
+        </p>
+      </div>
+
+      <div class="card">
+        <p class="eyebrow" style="margin-bottom:var(--s-4)">Specification</p>
+        <!-- EDIT: technical spec rows -->
+        <div class="edu-item">
+          <div class="edu-top"><h4>Architecture</h4><span class="edu-year">ANN</span></div>
+          <p class="edu-school">Feed-forward neural network</p>
+        </div>
+        <div class="edu-item">
+          <div class="edu-top"><h4>Inputs</h4><span class="edu-year">2</span></div>
+          <p class="edu-school">Sea surface temperature, chlorophyll-a</p>
+        </div>
+        <div class="edu-item">
+          <div class="edu-top"><h4>Output</h4><span class="edu-year">mg/m³</span></div>
+          <p class="edu-school">Predicted biomass</p>
+        </div>
+        <div class="edu-item">
+          <div class="edu-top"><h4>Training data</h4><span class="edu-year">—</span></div>
+          <p class="edu-school">In-situ cruise stations, Bay of Bengal</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ METHOD ============ -->
+<section class="section depth-2">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Method</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">How it was built</h2>
+    </div>
+
+    <div class="card">
+      <ul class="tick-list">
+        <!-- EDIT: method steps -->
+        <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Step one — describe the data collection.</span></li>
+        <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Step two — describe preprocessing and QC.</span></li>
+        <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Step three — describe model selection and tuning.</span></li>
+        <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Step four — describe validation and deployment.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ RESULTS / FIGURES ============ -->
+<section class="section depth-2">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Results</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">Validation &amp; output</h2>
+    </div>
+
+    <!--
+      EDIT: Drop your figures here.
+      Put image files in  assets/img/  then reference them:
+
+      <figure class="card">
+        <img src="../assets/img/pbm-scatter.png"
+             alt="Scatter plot of predicted versus measured phytoplankton biomass, R squared 0.87"
+             width="1200" height="800" loading="lazy">
+        <figcaption class="mono" style="color:var(--fg-faint);margin-top:var(--s-3)">
+          Fig 1 — Predicted vs measured biomass across validation stations.
+        </figcaption>
+      </figure>
+
+      ALWAYS include: alt text, width, height, loading="lazy"
+    -->
+    <div class="empty">
+      <p style="margin:0 auto">Figures and validation plots go here.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ INTERACTIVE DEMO (optional) ============ -->
+<section class="section depth-2">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Try it</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">Interactive prediction</h2>
+      <p class="lead">
+        If your model is small enough to run in the browser, put the form and the
+        prediction logic here. Otherwise link to a Colab notebook or a hosted API.
+      </p>
+    </div>
+
+    <!--
+      EDIT: For a browser-side demo you have two easy options.
+
+      OPTION A — a plain formula (band-math expressions work well here).
+        Write the equation directly in JavaScript at the bottom of this file.
+
+      OPTION B — a real trained model.
+        Export to TensorFlow.js or ONNX Runtime Web, then load it.
+        Remember Netlify serves static files, so put the model file in
+        assets/models/ and fetch it with a relative path.
+    -->
+    <div class="empty">
+      <p style="margin:0 auto">Demo form goes here.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ CITATION ============ -->
+<section class="section depth-3">
+  <div class="wrap">
+    <div class="contact-card">
+      <p class="eyebrow" style="justify-content:center">Citation</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">Cite this work</h2>
+      <p class="lead" style="margin-bottom:var(--s-5)">
+        If this model supports your research, please cite the associated paper.
+      </p>
+      <!-- EDIT: citation text -->
+      <p class="mono" style="text-align:left;max-width:70ch;margin:0 auto;padding:var(--s-4);
+                background:var(--surface);border:1px solid var(--border);
+                border-radius:var(--radius-sm);color:var(--fg-soft);overflow-wrap:anywhere">
+        Marjuk, M. S., et al. (2025). Paper title here.
+        <em>Journal Name</em>. https://doi.org/...
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <p>&copy; <span id="year"></span> M. Syed Marjuk · Built with care</p>
+    <nav class="footer-links" aria-label="Footer navigation">
+      <a href="../index.html">Portfolio</a>
+      <a href="index.html">Models</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

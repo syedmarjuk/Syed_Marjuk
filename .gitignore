@@ -1,0 +1,25 @@
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+$RECYCLE.BIN/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*~
+
+# Netlify local
+.netlify/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Keep the img folder in git even while it is empty,
+# but ignore stray originals you might drop in there.
+assets/img/*.psd
+assets/img/*.ai
+assets/img/*-original.*

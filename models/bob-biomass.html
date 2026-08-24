@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bay of Bengal Plankton Biomass Estimator — M. Syed Marjuk</title>
+<meta name="description" content="Live estimator for phytoplankton and zooplankton biomass in the southwestern Bay of Bengal from MODIS-Aqua and Oceansat-3 OCM-3 sea surface temperature and chlorophyll-a. Four fitted response surfaces computed in your browser.">
+<link rel="canonical" href="https://syedmarjuk.netlify.app/models/bob-biomass.html">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bay of Bengal Plankton Biomass Estimator — live model">
+<meta property="og:description" content="PBM and ZBM from satellite SST and chlorophyll-a. Four fitted surfaces, computed live.">
+<meta property="og:image" content="https://syedmarjuk.netlify.app/assets/img/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<meta name="theme-color" content="#0A1120" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F6F9FC" media="(prefers-color-scheme: light)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='25' x='2' font-size='24'%3E%F0%9F%94%AC%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="ic-plankton" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4.5"/><path d="M12 7.5V3"/><path d="M12 16.5V21"/>
+    <path d="M7.5 12H3"/><path d="M16.5 12H21"/><path d="m8.8 8.8-3-3"/>
+    <path d="m15.2 15.2 3 3"/><path d="m15.2 8.8 3-3"/><path d="m8.8 15.2-3 3"/>
+    <circle cx="12" cy="12" r="1.5"/>
+  </symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></symbol>
+  <symbol id="ic-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="ic-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+  <symbol id="ic-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></symbol>
+  <symbol id="ic-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="ic-satellite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 10.5 3 14l3.5 3.5L10 14"/><path d="m10 14 4-4"/><path d="M13.5 6.5 17 3l4 4-3.5 3.5z"/><path d="m14 10 3.5 3.5"/><path d="M9 3a6 6 0 0 1 6 6"/><path d="M9 7a2 2 0 0 1 2 2"/></symbol>
+  <symbol id="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.3 17.7-1.4 1.4"/><path d="m19.1 4.9-1.4 1.4"/></symbol>
+  <symbol id="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></symbol>
+  <symbol id="ic-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></symbol>
+  <symbol id="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+</svg>
+
+
+<header class="nav is-scrolled" id="nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="brand" aria-label="M. Syed Marjuk — home">
+      <svg class="brand-mark" aria-hidden="true"><use href="#ic-plankton"></use></svg>
+      <span>M. Syed Marjuk<small>Marine · Remote Sensing · AI</small></span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+      <a href="../index.html#about">About</a>
+      <a href="../index.html#publications">Publications</a>
+      <a href="index.html" class="is-active">Models</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to light theme">
+        <svg aria-hidden="true"><use href="#ic-sun" id="themeIcon"></use></svg>
+      </button>
+      <button class="icon-btn nav-toggle" id="navToggle" type="button"
+              aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+        <svg aria-hidden="true"><use href="#ic-menu" id="navToggleIcon"></use></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+<main id="main">
+
+<!-- ============ HEADER ============ -->
+<section class="section depth-1" style="padding-top:calc(68px + var(--s-7));padding-bottom:var(--s-6)">
+  <div class="wrap">
+    <a class="btn btn-quiet" href="index.html" style="margin-bottom:var(--s-4);padding-left:0">
+      <svg aria-hidden="true"><use href="#ic-back"></use></svg> All models
+    </a>
+
+    <p class="eyebrow">Model 02 · Satellite response surfaces</p>
+    <h1 style="font-size:clamp(1.75rem,4.4vw,2.9rem);margin-bottom:var(--s-4)">
+      Bay of Bengal plankton biomass estimator
+    </h1>
+    <p class="lead">
+      Phytoplankton and zooplankton biomass from satellite sea surface temperature and
+      chlorophyll-a. Four candidate response surfaces were fitted against in-situ cruise
+      data — pick one and the equations, values and biomass field update together.
+    </p>
+
+    <dl class="metrics" style="margin-top:var(--s-6)">
+      <div class="metric"><dd class="metric-num">2</dd><dt class="metric-label">Outputs PBM·ZBM</dt></div>
+      <div class="metric"><dd class="metric-num">4</dd><dt class="metric-label">Fitted Surfaces</dt></div>
+      <div class="metric"><dd class="metric-num">7</dd><dt class="metric-label">Validation Cruises</dt></div>
+      <div class="metric"><dd class="metric-num">2025</dd><dt class="metric-label">RSMA</dt></div>
+    </dl>
+  </div>
+</section>
+
+
+<!-- ============ LIVE CONSOLE ============ -->
+<section class="section depth-2" style="padding-top:var(--s-6)">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Live estimate</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">Enter satellite conditions</h2>
+      <p class="lead">
+        Set the sea surface temperature and chlorophyll-a you would read off a MODIS-Aqua
+        or OCM-3 pixel. Both biomass outputs are computed instantly.
+      </p>
+    </div>
+
+    <div class="console">
+
+      <!-- ---- controls ---- -->
+      <div>
+        <div class="panel">
+          <p class="panel-title">Satellite inputs</p>
+
+          <div class="ctrl">
+            <div class="ctrl-head">
+              <label class="ctrl-label" for="inSst">Sea surface temperature<small>MODIS-Aqua / OCM-3 SST</small></label>
+              <output class="ctrl-val" id="outSst" for="inSst">28.0 °C</output>
+            </div>
+            <input type="range" id="inSst" min="25" max="32" step="0.05" value="28" aria-describedby="scaleSst">
+            <div class="ctrl-scale" id="scaleSst"><span>25 °C</span><span>32 °C</span></div>
+          </div>
+
+          <div class="ctrl">
+            <div class="ctrl-head">
+              <label class="ctrl-label" for="inChl">Chlorophyll-a<small>Ocean colour pigment</small></label>
+              <output class="ctrl-val" id="outChl" for="inChl">1.50 mg/m³</output>
+            </div>
+            <input type="range" id="inChl" min="0.1" max="6" step="0.01" value="1.5" aria-describedby="scaleChl">
+            <div class="ctrl-scale" id="scaleChl"><span>0.1</span><span>6.0 mg/m³</span></div>
+          </div>
+
+          <button class="btn btn-ghost" id="btnReset" type="button" style="width:100%;margin-top:var(--s-2)">
+            <svg aria-hidden="true"><use href="#ic-reset"></use></svg> Reset
+          </button>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">Response surface model</p>
+          <div class="seg" role="group" aria-label="Surface model" id="surfaceSeg"
+               style="display:grid;grid-template-columns:1fr 1fr;gap:2px"></div>
+          <p style="font-size:.8125rem;color:var(--fg-muted);margin-top:var(--s-4)">
+            Four functional forms were fitted to the same paired satellite and in-situ
+            dataset. Comparing them shows how sensitive the estimate is to the choice
+            of surface.
+          </p>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">All four surfaces at this pixel</p>
+          <div id="compareList" style="display:grid;gap:var(--s-2)"></div>
+        </div>
+      </div>
+
+      <!-- ---- outputs ---- -->
+      <div>
+        <dl class="readouts">
+          <div class="readout">
+            <dt>Phytoplankton biomass</dt>
+            <dd><span id="valPbm">0.00</span><span class="unit">mg / m³</span></dd>
+          </div>
+          <div class="readout alt">
+            <dt>Zooplankton biomass</dt>
+            <dd><span id="valZbm">0.00</span><span class="unit">mg / m³</span></dd>
+          </div>
+        </dl>
+
+        <div class="panel">
+          <p class="panel-title">Active equations — <span id="eqName" style="color:var(--cyan)">Linear</span></p>
+          <div class="eq" id="eqBox"></div>
+          <p class="mono" style="margin-top:var(--s-3);color:var(--fg-faint);font-size:.6875rem">
+            ZBM is a function of chlorophyll-a and the PBM value above it — the models are chained.
+          </p>
+        </div>
+
+        <div class="panel">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--s-3);margin-bottom:var(--s-4)">
+            <p class="panel-title" style="margin:0">Biomass field</p>
+            <div class="seg" role="group" aria-label="Field output">
+              <button type="button" data-field="pbm" aria-pressed="true">PBM</button>
+              <button type="button" data-field="zbm" aria-pressed="false">ZBM</button>
+            </div>
+          </div>
+
+          <div class="field-wrap">
+            <canvas class="field-canvas" id="fieldCanvas"
+                    role="img" aria-label="Heat map of predicted biomass across sea surface temperature and chlorophyll-a"></canvas>
+          </div>
+          <p class="axis-x">SST 25 → 32 °C &nbsp;·&nbsp; Chlorophyll-a 0.1 (bottom) → 6.0 mg/m³ (top)</p>
+
+          <div class="legend-ramp">
+            <span id="rampMin">low</span>
+            <span class="ramp-bar" id="rampBar"></span>
+            <span id="rampMax">high</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <svg aria-hidden="true"><use href="#ic-info"></use></svg>
+      <p>
+        Surfaces were fitted over SST 25–32 °C and chlorophyll-a 0.1–6 mg/m³ in the
+        southwestern Bay of Bengal. The Gaussian and Lorentzian forms have centres far
+        outside the SST domain, so within this window they behave as smooth monotonic
+        functions of chlorophyll — that is expected, not a fitting error. Estimates
+        outside the stated ranges, or in other basins, are not supported.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ PIPELINE ============ -->
+<section class="section depth-2">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Pipeline</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">From pixel to biomass map</h2>
+    </div>
+
+    <div class="grid-focus stagger">
+      <article class="card">
+        <div class="card-icon"><svg aria-hidden="true"><use href="#ic-satellite"></use></svg></div>
+        <h3 style="font-size:1rem">1 · Ocean colour products</h3>
+        <p>SST and chlorophyll-a extracted from MODIS-Aqua and Oceansat-3 OCM-3 in SeaDAS,
+           matched in space and time to cruise stations.</p>
+      </article>
+      <article class="card">
+        <div class="card-icon"><svg aria-hidden="true"><use href="#ic-check"></use></svg></div>
+        <h3 style="font-size:1rem">2 · In-situ pairing</h3>
+        <p>Plankton biomass measured from WP-2 vertical hauls at each station across seven
+           research cruises, giving the ground truth for the fit.</p>
+      </article>
+      <article class="card">
+        <div class="card-icon"><svg aria-hidden="true"><use href="#ic-arrow"></use></svg></div>
+        <h3 style="font-size:1rem">3 · Surface fitting</h3>
+        <p>Four functional forms fitted and compared, with PBM feeding forward into the
+           ZBM relationship to preserve the trophic link.</p>
+      </article>
+      <article class="card">
+        <div class="card-icon"><svg aria-hidden="true"><use href="#ic-plankton"></use></svg></div>
+        <h3 style="font-size:1rem">4 · Pixel-wise mapping</h3>
+        <p>The chosen equation is written as a SeaDAS band-math expression and evaluated
+           per pixel, producing basin-scale biomass maps.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ BAND MATH ============ -->
+<section class="section depth-2">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Deployment</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">SeaDAS band math</h2>
+      <p class="lead">
+        Because every surface is closed-form arithmetic, it drops straight into SeaDAS as a
+        band-math expression — no external model file, no Python runtime on the processing host.
+      </p>
+    </div>
+    <div class="panel">
+      <p class="panel-title">Linear form, as entered in SeaDAS</p>
+      <div class="eq">
+        <code>PBM = 1.312 - (0.020 * sst) + (1.072 * chlor_a)</code>
+        <code>ZBM = 1.201 + (0.693 * chlor_a) + (1.119 * PBM)</code>
+      </div>
+      <p style="font-size:.8125rem;color:var(--fg-muted);margin-top:var(--s-4)">
+        Substitute the band names used by your product — <code class="mono">sst</code> and
+        <code class="mono">chlor_a</code> for MODIS-Aqua Level-2, or the OCM-3 equivalents.
+        Evaluate PBM into its own band first, then reference it in the ZBM expression.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ CITATION ============ -->
+<section class="section depth-3">
+  <div class="wrap">
+    <div class="contact-card">
+      <p class="eyebrow" style="justify-content:center">Citation</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">Cite this model</h2>
+      <p class="lead" style="margin-bottom:var(--s-5)">
+        Published in <em>Regional Studies in Marine Science</em>.
+      </p>
+      <p class="mono" style="text-align:left;max-width:76ch;margin:0 auto var(--s-5);padding:var(--s-4);
+                background:var(--surface);border:1px solid var(--border);
+                border-radius:var(--radius-sm);color:var(--fg-soft);overflow-wrap:anywhere;line-height:1.7">
+        Marjuk, M. S., Sarangi, R. K., Ayyasamy, G., Perumal, S., &amp; Pachiappan, P. (2025).
+        Modeling phytoplankton and zooplankton biomass in the southwestern Bay of Bengal:
+        a remote sensing approach with MODIS-Aqua and Oceansat-3 data.
+        <em>Regional Studies in Marine Science</em>, 104425.
+      </p>
+      <div class="contact-links">
+        <a class="link-tile" href="https://doi.org/10.1016/j.rsma.2025.104425"
+           target="_blank" rel="noopener noreferrer">
+          <svg aria-hidden="true"><use href="#ic-ext"></use></svg>
+          <span class="tile-txt"><small>Publisher</small>Read the paper</span>
+        </a>
+        <a class="link-tile" href="acartia-optimiser.html">
+          <svg aria-hidden="true"><use href="#ic-arrow"></use></svg>
+          <span class="tile-txt"><small>Other model</small>Acartia optimiser</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <p>&copy; <span id="year"></span> M. Syed Marjuk · Built with care</p>
+    <nav class="footer-links" aria-label="Footer navigation">
+      <a href="../index.html">Portfolio</a>
+      <a href="index.html">Models</a>
+      <a href="../index.html#publications">Publications</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/models.js"></script>
+<script src="../assets/js/main.js"></script>
+<script>
+/* ---------- Bay of Bengal biomass page controller ---------- */
+(function () {
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const M = window.MarineModels;
+  if (!M) return;
+
+  const inSst = $('#inSst'), inChl = $('#inChl');
+  const canvas = $('#fieldCanvas');
+  let surface = 'Linear';
+  let fieldOut = 'pbm';
+
+  function paintTrack(el) {
+    const pct = ((el.value - el.min) / (el.max - el.min)) * 100;
+    el.style.setProperty('--fill', pct + '%');
+  }
+
+  /* build the surface selector from the model definition */
+  $('#surfaceSeg').innerHTML = M.surfaces.map(s =>
+    `<button type="button" data-surface="${s}" aria-pressed="${s === surface}">${s}</button>`).join('');
+
+  function update() {
+    const sst = parseFloat(inSst.value);
+    const chl = parseFloat(inChl.value);
+
+    $('#outSst').textContent = sst.toFixed(1) + ' °C';
+    $('#outChl').textContent = chl.toFixed(2) + ' mg/m³';
+    [inSst, inChl].forEach(paintTrack);
+
+    const r = M.biomass(surface, sst, chl);
+    $('#valPbm').textContent = Math.max(0, r.pbm).toFixed(2);
+    $('#valZbm').textContent = Math.max(0, r.zbm).toFixed(2);
+
+    $('#eqName').textContent = surface;
+    $('#eqBox').innerHTML = M.equations[surface]
+      .map(e => `<code>${e}</code>`).join('');
+
+    // side-by-side comparison of all four surfaces
+    $('#compareList').innerHTML = M.surfaces.map(s => {
+      const v = M.biomass(s, sst, chl);
+      const on = s === surface;
+      return `<div class="prob" style="grid-template-columns:82px 1fr 1fr">
+          <span style="color:${on ? 'var(--cyan)' : 'var(--fg-faint)'};${on ? 'font-weight:600' : ''}">${s}</span>
+          <span class="prob-val">${Math.max(0, v.pbm).toFixed(2)}</span>
+          <span class="prob-val" style="color:var(--teal)">${Math.max(0, v.zbm).toFixed(2)}</span>
+        </div>`;
+    }).join('') +
+      `<div class="prob" style="grid-template-columns:82px 1fr 1fr;border-top:1px solid var(--border);padding-top:var(--s-2);margin-top:2px">
+         <span style="color:var(--fg-faint)"></span>
+         <span class="prob-val" style="color:var(--fg-faint);font-size:.6875rem">PBM</span>
+         <span class="prob-val" style="color:var(--fg-faint);font-size:.6875rem">ZBM</span>
+       </div>`;
+
+    drawField();
+  }
+
+  function ramp(v) {
+    const stops = [[13, 27, 48], [15, 90, 110], [34, 190, 200], [190, 245, 250]];
+    const x = Math.max(0, Math.min(1, v)) * (stops.length - 1);
+    const i = Math.min(stops.length - 2, Math.floor(x));
+    const f = x - i;
+    const c = [0, 1, 2].map(k => Math.round(stops[i][k] + (stops[i + 1][k] - stops[i][k]) * f));
+    return `rgb(${c[0]},${c[1]},${c[2]})`;
+  }
+
+  function drawField() {
+    if (!canvas) return;
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    if (!w || !h) return;
+
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const sst = parseFloat(inSst.value), chl = parseFloat(inChl.value);
+    const [x0, x1] = M.ranges.sst;
+    const [y0, y1] = M.ranges.chl;
+
+    const COLS = 68, ROWS = 44;
+    const vals = [];
+    let lo = Infinity, hi = -Infinity;
+
+    for (let j = 0; j < ROWS; j++) {
+      vals[j] = [];
+      const cv = y0 + (y1 - y0) * (j / (ROWS - 1));
+      for (let i = 0; i < COLS; i++) {
+        const sv = x0 + (x1 - x0) * (i / (COLS - 1));
+        const b = M.biomass(surface, sv, cv);
+        const v = Math.max(0, fieldOut === 'zbm' ? b.zbm : b.pbm);
+        vals[j][i] = v;
+        if (v < lo) lo = v;
+        if (v > hi) hi = v;
+      }
+    }
+
+    const cw = w / COLS, ch = h / ROWS;
+    const span = (hi - lo) || 1;
+    for (let j = 0; j < ROWS; j++) {
+      for (let i = 0; i < COLS; i++) {
+        ctx.fillStyle = ramp((vals[j][i] - lo) / span);
+        ctx.fillRect(i * cw - 0.5, (ROWS - 1 - j) * ch - 0.5, cw + 1, ch + 1);
+      }
+    }
+
+    const mx = ((sst - x0) / (x1 - x0)) * w;
+    const my = (1 - (chl - y0) / (y1 - y0)) * h;
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(255,255,255,.95)';
+    ctx.beginPath(); ctx.arc(mx, my, 9, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = 'rgba(0,0,0,.55)';
+    ctx.beginPath(); ctx.arc(mx, my, 11.5, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,.95)';
+    ctx.beginPath(); ctx.arc(mx, my, 2.2, 0, Math.PI * 2); ctx.fill();
+
+    $('#rampMin').textContent = lo.toFixed(2);
+    $('#rampMax').textContent = hi.toFixed(2) + ' mg/m³';
+    $('#rampBar').style.background =
+      `linear-gradient(90deg, ${ramp(0)}, ${ramp(0.33)}, ${ramp(0.66)}, ${ramp(1)})`;
+
+    canvas.setAttribute('aria-label',
+      `Heat map of ${fieldOut.toUpperCase()} from the ${surface} surface, across SST 25 to 32 ` +
+      `degrees and chlorophyll-a 0.1 to 6 milligrams per cubic metre. Values range ` +
+      `${lo.toFixed(2)} to ${hi.toFixed(2)}. Current pixel ${sst.toFixed(1)} degrees, ` +
+      `${chl.toFixed(2)} milligrams per cubic metre.`);
+  }
+
+  [inSst, inChl].forEach(el => el.addEventListener('input', update));
+
+  $('#surfaceSeg').addEventListener('click', e => {
+    const b = e.target.closest('[data-surface]');
+    if (!b) return;
+    surface = b.dataset.surface;
+    document.querySelectorAll('[data-surface]').forEach(x =>
+      x.setAttribute('aria-pressed', String(x === b)));
+    update();
+  });
+
+  document.querySelectorAll('[data-field]').forEach(b => {
+    b.addEventListener('click', () => {
+      fieldOut = b.dataset.field;
+      document.querySelectorAll('[data-field]').forEach(x =>
+        x.setAttribute('aria-pressed', String(x === b)));
+      drawField();
+    });
+  });
+
+  $('#btnReset').addEventListener('click', () => {
+    inSst.value = 28; inChl.value = 1.5; update();
+  });
+
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawField, 160); });
+  document.getElementById('themeBtn').addEventListener('click', () => setTimeout(drawField, 40));
+
+  update();
+})();
+</script>
+</body>
+</html>
