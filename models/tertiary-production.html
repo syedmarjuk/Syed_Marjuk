@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tertiary Production &amp; Food Chain Model — M. Syed Marjuk</title>
+<meta name="description" content="A four-tier satellite-driven trophic transfer model for the southwestern Bay of Bengal, from VGPM primary production through plankton biomass and secondary production to potential fishery yield. Calibrated on 1,022 fishery-independent survey sets. Runs live in your browser.">
+<link rel="canonical" href="https://syedmarjuk.netlify.app/models/tertiary-production.html">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tertiary Production &amp; Food Chain Model — live 4-tier chain">
+<meta property="og:description" content="Satellite pixel to fishery yield in four tiers. Bayesian transfer efficiency 4.91%. Bay of Bengal.">
+<meta property="og:image" content="https://syedmarjuk.netlify.app/assets/img/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<meta name="theme-color" content="#0A1120" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F6F9FC" media="(prefers-color-scheme: light)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='25' x='2' font-size='24'%3E%F0%9F%94%AC%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="ic-plankton" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4.5"/><path d="M12 7.5V3"/><path d="M12 16.5V21"/>
+    <path d="M7.5 12H3"/><path d="M16.5 12H21"/><path d="m8.8 8.8-3-3"/>
+    <path d="m15.2 15.2 3 3"/><path d="m15.2 8.8 3-3"/><path d="m8.8 15.2-3 3"/>
+    <circle cx="12" cy="12" r="1.5"/>
+  </symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></symbol>
+  <symbol id="ic-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="ic-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="ic-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+  <symbol id="ic-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></symbol>
+  <symbol id="ic-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="ic-satellite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 10.5 3 14l3.5 3.5L10 14"/><path d="m10 14 4-4"/><path d="M13.5 6.5 17 3l4 4-3.5 3.5z"/><path d="m14 10 3.5 3.5"/><path d="M9 3a6 6 0 0 1 6 6"/><path d="M9 7a2 2 0 0 1 2 2"/></symbol>
+  <symbol id="ic-fish" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c3-5 8-7 12-7 4 0 6 3 6 7s-2 7-6 7c-4 0-9-2-12-7z"/><path d="M2 12s2 2 4 2"/><path d="M16 10h.01"/></symbol>
+  <symbol id="ic-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol>
+  <symbol id="ic-waves" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8c2.5 0 3-2 5-2s2.5 2 5 2 3-2 5-2 2.5 2 5 2"/><path d="M2 14c2.5 0 3-2 5-2s2.5 2 5 2 3-2 5-2 2.5 2 5 2"/><path d="M2 20c2.5 0 3-2 5-2s2.5 2 5 2 3-2 5-2 2.5 2 5 2"/></symbol>
+  <symbol id="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.3 17.7-1.4 1.4"/><path d="m19.1 4.9-1.4 1.4"/></symbol>
+  <symbol id="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></symbol>
+  <symbol id="ic-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></symbol>
+  <symbol id="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+</svg>
+
+
+<header class="nav is-scrolled" id="nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="brand" aria-label="M. Syed Marjuk — home">
+      <svg class="brand-mark" aria-hidden="true"><use href="#ic-plankton"></use></svg>
+      <span>M. Syed Marjuk<small>Marine · Remote Sensing · AI</small></span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+      <a href="../index.html#about">About</a>
+      <a href="../index.html#publications">Publications</a>
+      <a href="index.html" class="is-active">Models</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to light theme">
+        <svg aria-hidden="true"><use href="#ic-sun" id="themeIcon"></use></svg>
+      </button>
+      <button class="icon-btn nav-toggle" id="navToggle" type="button"
+              aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+        <svg aria-hidden="true"><use href="#ic-menu" id="navToggleIcon"></use></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+<main id="main">
+
+<!-- ============ HEADER ============ -->
+<section class="section depth-1" style="padding-top:calc(68px + var(--s-7));padding-bottom:var(--s-6)">
+  <div class="wrap">
+    <a class="btn btn-quiet" href="index.html" style="margin-bottom:var(--s-4);padding-left:0">
+      <svg aria-hidden="true"><use href="#ic-back"></use></svg> All models
+    </a>
+
+    <p class="eyebrow">Model 03 · Four-tier trophic transfer</p>
+    <h1 style="font-size:clamp(1.75rem,4.4vw,2.9rem);margin-bottom:var(--s-4)">
+      Tertiary production &amp; food chain model
+    </h1>
+    <p class="lead">
+      A satellite-driven trophic-transfer chain for the southwestern Bay of Bengal.
+      It takes one satellite pixel — sea surface temperature, chlorophyll-a, light and
+      water clarity — and carries it through four tiers to a potential fishery yield,
+      calibrated against 1,022 fishery-independent survey sets.
+    </p>
+
+    <dl class="metrics" style="margin-top:var(--s-6)">
+      <div class="metric"><dd class="metric-num">4.91<span class="suf">%</span></dd><dt class="metric-label">Bayesian TE</dt></div>
+      <div class="metric"><dd class="metric-num">1022</dd><dt class="metric-label">Fishery Sets</dt></div>
+      <div class="metric"><dd class="metric-num">0.28</dd><dt class="metric-label">R² Extra Trees</dt></div>
+      <div class="metric"><dd class="metric-num">4</dd><dt class="metric-label">Trophic Tiers</dt></div>
+    </dl>
+  </div>
+</section>
+
+
+<!-- ============ THE HEADLINE FINDING ============ -->
+<section class="section depth-2" style="padding-top:var(--s-6)">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">The finding</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">The mesozooplankton pathway does not close</h2>
+      <p class="lead">
+        Built to estimate fishery production, the chain instead produced a diagnosis. That
+        diagnosis is the result.
+      </p>
+    </div>
+
+    <div class="grid-focus stagger">
+      <article class="card">
+        <div class="card-icon"><svg aria-hidden="true"><use href="#ic-waves"></use></svg></div>
+        <h3 style="font-size:1rem">0.78% of primary production</h3>
+        <p>
+          The mesozooplankton route carries less than one percent of primary production
+          to fish. The literature expects 10–20 %, so the pathway is short by roughly
+          nineteen-fold.
+        </p>
+      </article>
+      <article class="card">
+        <div class="card-icon"><svg aria-hidden="true"><use href="#ic-leaf"></use></svg></div>
+        <h3 style="font-size:1rem">Two mechanisms explain it</h3>
+        <p>
+          Microzooplankton, which a 200 µm net does not retain, and the benthic detrital
+          pathway. Neither is captured by a net-based secondary production term.
+        </p>
+      </article>
+      <article class="card">
+        <div class="card-icon"><svg aria-hidden="true"><use href="#ic-fish"></use></svg></div>
+        <h3 style="font-size:1rem">Anchoring differently gives 10.7%</h3>
+        <p>
+          Anchor the chain on primary production rather than on measured mesozooplankton
+          and transfer efficiency lands at 10.7 % — matching both Tamil Nadu demersal
+          landings and the textbook value.
+        </p>
+      </article>
+      <article class="card">
+        <div class="card-icon"><svg aria-hidden="true"><use href="#ic-satellite"></use></svg></div>
+        <h3 style="font-size:1rem">A case for regional algorithms</h3>
+        <p>
+          PACE chlorophyll shows no correlation with measured chlorophyll at 14 in-situ
+          stations (ρ = +0.22, p = 0.14). A direct argument for regionally tuned
+          algorithms and for OCM-3's 360 m resolution over a 4 km global product.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ LIVE CHAIN ============ -->
+<section class="section depth-2">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Live calculation</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">Run the chain on a pixel</h2>
+      <p class="lead">
+        Set what a satellite would read at one location and watch the value propagate
+        through all four tiers. Every coefficient is the published one — nothing here
+        is fitted on the fly.
+      </p>
+    </div>
+
+    <div class="console">
+
+      <!-- ---- inputs ---- -->
+      <div>
+        <div class="panel">
+          <p class="panel-title">Satellite inputs</p>
+
+          <div class="ctrl">
+            <div class="ctrl-head">
+              <label class="ctrl-label" for="inSst">Sea surface temperature<small>MODIS / OCM-3</small></label>
+              <output class="ctrl-val" id="outSst" for="inSst">28.0 °C</output>
+            </div>
+            <input type="range" id="inSst" min="24" max="32" step="0.1" value="28">
+            <div class="ctrl-scale"><span>24 °C</span><span>32 °C</span></div>
+          </div>
+
+          <div class="ctrl">
+            <div class="ctrl-head">
+              <label class="ctrl-label" for="inChl">Chlorophyll-a<small>Ocean colour pigment</small></label>
+              <output class="ctrl-val" id="outChl" for="inChl">1.50 mg/m³</output>
+            </div>
+            <input type="range" id="inChl" min="0.05" max="10" step="0.05" value="1.5">
+            <div class="ctrl-scale"><span>0.05</span><span>10 mg/m³</span></div>
+          </div>
+
+          <div class="ctrl">
+            <div class="ctrl-head">
+              <label class="ctrl-label" for="inPar">PAR<small>Photosynthetically available radiation</small></label>
+              <output class="ctrl-val" id="outPar" for="inPar">45 mol/m²/d</output>
+            </div>
+            <input type="range" id="inPar" min="10" max="70" step="0.5" value="45">
+            <div class="ctrl-scale"><span>10</span><span>70 mol/m²/d</span></div>
+          </div>
+
+          <div class="ctrl">
+            <div class="ctrl-head">
+              <label class="ctrl-label" for="inKd">Kd490<small>Diffuse attenuation — water clarity</small></label>
+              <output class="ctrl-val" id="outKd" for="inKd">0.150 m⁻¹</output>
+            </div>
+            <input type="range" id="inKd" min="0.02" max="1.5" step="0.005" value="0.15">
+            <div class="ctrl-scale"><span>0.02</span><span>1.5 m⁻¹</span></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">Location &amp; season</p>
+
+          <div class="ctrl">
+            <div class="ctrl-head">
+              <label class="ctrl-label" for="inLat">Latitude<small>Sets the daylength</small></label>
+              <output class="ctrl-val" id="outLat" for="inLat">12.0 °N</output>
+            </div>
+            <input type="range" id="inLat" min="8" max="20" step="0.1" value="12">
+            <div class="ctrl-scale"><span>8 °N</span><span>20 °N</span></div>
+          </div>
+
+          <div class="ctrl">
+            <div class="ctrl-head">
+              <label class="ctrl-label" for="inDoy">Day of year<small>Solar declination</small></label>
+              <output class="ctrl-val" id="outDoy" for="inDoy">15 · Jan</output>
+            </div>
+            <input type="range" id="inDoy" min="1" max="365" step="1" value="15">
+            <div class="ctrl-scale"><span>Jan</span><span>Dec</span></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">Trophic assumptions</p>
+
+          <div class="ctrl">
+            <div class="ctrl-head">
+              <label class="ctrl-label" for="inTl">Fish trophic level<small>3.67 trawl · 4.34 longline</small></label>
+              <output class="ctrl-val" id="outTl" for="inTl">3.67</output>
+            </div>
+            <input type="range" id="inTl" min="2.5" max="4.6" step="0.01" value="3.672">
+            <div class="ctrl-scale"><span>2.5</span><span>4.6</span></div>
+          </div>
+
+          <p class="panel-title" style="margin-top:var(--s-5)">Transfer efficiency</p>
+          <div class="seg" role="group" aria-label="Transfer efficiency" id="teSeg"
+               style="display:grid;grid-template-columns:1fr 1fr;gap:2px"></div>
+
+          <p class="panel-title" style="margin-top:var(--s-5)">P/B growth model</p>
+          <div class="seg" role="group" aria-label="P over B model" id="pbSeg"
+               style="display:grid;gap:2px"></div>
+          <p class="mono" id="pbNote" style="margin-top:var(--s-3);color:var(--fg-faint);font-size:.6875rem"></p>
+
+          <button class="btn btn-ghost" id="btnReset" type="button" style="width:100%;margin-top:var(--s-4)">
+            <svg aria-hidden="true"><use href="#ic-reset"></use></svg> Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- ---- the chain ---- -->
+      <div>
+        <div class="panel">
+          <p class="panel-title">Tier 1 · Primary production <span style="color:var(--fg-faint)">— VGPM</span></p>
+          <dl class="readouts" style="margin-bottom:var(--s-3)">
+            <div class="readout">
+              <dt>Primary production</dt>
+              <dd><span id="valPP">0</span><span class="unit">mg C / m² / d</span></dd>
+            </div>
+            <div class="readout alt">
+              <dt>Euphotic depth</dt>
+              <dd><span id="valZeu">0</span><span class="unit">m</span></dd>
+            </div>
+          </dl>
+          <div class="prob-list">
+            <div class="prob" style="grid-template-columns:150px 1fr">
+              <span>P<sub>opt</sub> (B&amp;F 1997)</span><span class="prob-val" id="valPbopt">—</span>
+            </div>
+            <div class="prob" style="grid-template-columns:150px 1fr">
+              <span>Daylength</span><span class="prob-val" id="valDayl">—</span>
+            </div>
+            <div class="prob" style="grid-template-columns:150px 1fr">
+              <span>PP, Eppley variant</span><span class="prob-val" id="valPPe">—</span>
+            </div>
+          </div>
+          <p class="mono" id="satNote" style="margin-top:var(--s-3);color:var(--amber);font-size:.6875rem"></p>
+        </div>
+
+        <div style="display:grid;place-items:center;padding:var(--s-2) 0;color:var(--fg-faint)">
+          <svg width="22" height="22" aria-hidden="true"><use href="#ic-down"></use></svg>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">Tier 2 · Plankton biomass <span style="color:var(--fg-faint)">— Marjuk et al. 2025</span></p>
+          <dl class="readouts">
+            <div class="readout">
+              <dt>Phytoplankton biomass</dt>
+              <dd><span id="valPBM">0</span><span class="unit">mg DW / m³</span></dd>
+            </div>
+            <div class="readout alt">
+              <dt>Zooplankton biomass</dt>
+              <dd><span id="valZBM">0</span><span class="unit">mg DW / m³</span></dd>
+            </div>
+          </dl>
+          <p class="mono" style="margin-top:var(--s-3);color:var(--fg-faint);font-size:.6875rem">
+            The same two equations that drive the
+            <a href="bob-biomass.html">biomass estimator</a> on this site, applied unmodified.
+          </p>
+        </div>
+
+        <div style="display:grid;place-items:center;padding:var(--s-2) 0;color:var(--fg-faint)">
+          <svg width="22" height="22" aria-hidden="true"><use href="#ic-down"></use></svg>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">Tier 3 · Secondary production</p>
+          <dl class="readouts">
+            <div class="readout">
+              <dt>P/B growth rate</dt>
+              <dd><span id="valPBr">0</span><span class="unit">d⁻¹</span></dd>
+            </div>
+            <div class="readout alt">
+              <dt>Secondary production</dt>
+              <dd><span id="valSP">0</span><span class="unit">mg DW / m³ / d</span></dd>
+            </div>
+          </dl>
+          <p class="mono" id="rangeNote" style="margin-top:var(--s-3);font-size:.6875rem"></p>
+        </div>
+
+        <div style="display:grid;place-items:center;padding:var(--s-2) 0;color:var(--fg-faint)">
+          <svg width="22" height="22" aria-hidden="true"><use href="#ic-down"></use></svg>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">Tier 4 · Fish production &amp; yield</p>
+          <dl class="readouts">
+            <div class="readout">
+              <dt>Potential fish production</dt>
+              <dd><span id="valPFP">0</span><span class="unit">mg DW / m³ / d</span></dd>
+            </div>
+            <div class="readout alt">
+              <dt>Potential yield</dt>
+              <dd><span id="valPY">0</span><span class="unit">mg DW / m³ / d</span></dd>
+            </div>
+          </dl>
+          <div class="prob-list" style="margin-top:var(--s-4)">
+            <div class="prob" style="grid-template-columns:150px 1fr">
+              <span>Trophic gap</span><span class="prob-val" id="valGap">—</span>
+            </div>
+            <div class="prob" style="grid-template-columns:150px 1fr">
+              <span>TE raised to the gap</span><span class="prob-val" id="valTEp">—</span>
+            </div>
+          </div>
+          <div class="eq" style="margin-top:var(--s-4)">
+            <code>PFP = SP × TE^(TL_fish − TL_zoo)</code>
+            <code>PY  = PFP × 0.5        (Gulland 1971)</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <svg aria-hidden="true"><use href="#ic-info"></use></svg>
+      <p>
+        Tier 4 is deliberately shown per unit volume, exactly as the pipeline computes it.
+        Turning it into a shelf-wide tonnage requires an integration depth and a shelf mask,
+        and the project currently uses water clarity as a depth proxy pending GEBCO
+        bathymetry — so an areal figure quoted here would carry more confidence than the
+        inputs support.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ THE CHAIN, DOCUMENTED ============ -->
+<section class="section depth-2">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Provenance</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">Every equation, and where it comes from</h2>
+      <p class="lead">
+        Only one quantity in the whole chain is estimated here. Everything else is applied
+        unmodified from its published source.
+      </p>
+    </div>
+
+    <div class="panel">
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;min-width:640px">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid var(--border-strong)">
+              <th style="padding:var(--s-3);font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);font-weight:500">Tier</th>
+              <th style="padding:var(--s-3);font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);font-weight:500">Equation</th>
+              <th style="padding:var(--s-3);font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);font-weight:500">Source</th>
+              <th style="padding:var(--s-3);font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);font-weight:500">Status</th>
+            </tr>
+          </thead>
+          <tbody id="eqTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ MODEL PERFORMANCE ============ -->
+<section class="section depth-2">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Benchmark</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">Machine learning against the mechanistic chain</h2>
+      <p class="lead">
+        Nested spatial block cross-validation, so a model cannot score well by memorising
+        where the fishing happened. Tree ensembles win; the neural network and the stacked
+        ensemble do not — a useful answer to a question reviewers always ask.
+      </p>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <p class="panel-title">Bottom trawl · n = 531</p>
+        <div class="prob-list" id="mlTrawl"></div>
+      </div>
+      <div class="panel">
+        <p class="panel-title">Longline · n = 169</p>
+        <div class="prob-list" id="mlLongline"></div>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:var(--s-5)">
+      <svg aria-hidden="true"><use href="#ic-info"></use></svg>
+      <p>
+        Modelled secondary production is the top SHAP predictor for the trawl fishery, which
+        is the mechanistic chain earning its place inside a statistical model. The longline
+        R² near zero is honest: pelagic longline catch is driven by processes this chain does
+        not represent.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ DATA ============ -->
+<section class="section depth-2">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Inputs</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">What the model was built on</h2>
+    </div>
+
+    <div class="bento stagger">
+      <article class="card">
+        <div class="card-icon"><svg aria-hidden="true"><use href="#ic-fish"></use></svg></div>
+        <h3 style="margin-bottom:var(--s-4)">Fishery-independent survey</h3>
+        <ul class="tick-list">
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>726 bottom trawl sets — CRV Samudrika, 2016–18, kg h⁻¹</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>296 longline sets — FORV Drushti, n per 100 hooks</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Depths 26–129 m trawl, 20–4813 m longline</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Mean trophic level 3.67 trawl, 4.34 longline, from FishBase</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <div class="card-icon"><svg aria-hidden="true"><use href="#ic-satellite"></use></svg></div>
+        <h3 style="margin-bottom:var(--s-4)">Satellite</h3>
+        <ul class="tick-list">
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>2,122 MODIS / CRW scenes, 2005–2025</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>180 Oceansat-3 OCM scenes at 360 m LAC</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Match-ups built at lags 0–4 days and compared</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>PACE assessed and parked — no temporal overlap with the CPUE</span></li>
+        </ul>
+      </article>
+
+      <article class="card wide">
+        <div class="card-icon"><svg aria-hidden="true"><use href="#ic-waves"></use></svg></div>
+        <h3 style="margin-bottom:var(--s-4)">Open items, stated rather than hidden</h3>
+        <ul class="tick-list">
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>CMFRI demersal landings for Tamil Nadu use a 31.5 % assumed share, and one pathway's calibration rests on it</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>Samudrika trawl specification is carried as a prior; real gear values would tighten the transfer-efficiency interval</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>The shelf mask and integration depth use water clarity as a depth proxy, pending GEBCO bathymetry</span></li>
+          <li><svg aria-hidden="true"><use href="#ic-check"></use></svg><span>The three P/B growth models disagree roughly sixfold at 28 °C — propagated as a sensitivity, not chosen silently</span></li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ CITATION ============ -->
+<section class="section depth-3">
+  <div class="wrap">
+    <div class="contact-card">
+      <p class="eyebrow" style="justify-content:center">Status</p>
+      <h2 style="font-size:clamp(1.4rem,2.6vw,1.9rem)">Manuscript in preparation</h2>
+      <p class="lead" style="margin-bottom:var(--s-5)">
+        ISRO-SAC / Bharathidasan University Oceansat-3 project. The model code, constants and
+        every intermediate output are reproducible from the data and pipeline.
+      </p>
+      <div class="contact-links">
+        <a class="link-tile" href="bob-biomass.html">
+          <svg aria-hidden="true"><use href="#ic-arrow"></use></svg>
+          <span class="tile-txt"><small>Tier 2 comes from</small>Biomass estimator</span>
+        </a>
+        <a class="link-tile" href="../index.html#contact">
+          <svg aria-hidden="true"><use href="#ic-ext"></use></svg>
+          <span class="tile-txt"><small>Collaboration</small>Get in touch</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <p>&copy; <span id="year"></span> M. Syed Marjuk · Built with care</p>
+    <nav class="footer-links" aria-label="Footer navigation">
+      <a href="../index.html">Portfolio</a>
+      <a href="index.html">Models</a>
+      <a href="../index.html#publications">Publications</a>
+      <a href="../index.html#contact">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/models.js"></script>
+<script src="../assets/js/main.js"></script>
+<script>
+/* ---------- Tertiary production page controller ---------- */
+(function () {
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const M = window.MarineModels;
+  if (!M || !M.tertiary) return;
+  const T = M.tertiary;
+
+  const inputs = {
+    sst: $('#inSst'), chl: $('#inChl'), par: $('#inPar'),
+    kd: $('#inKd'), lat: $('#inLat'), doy: $('#inDoy'), tl: $('#inTl')
+  };
+
+  let teKey = 'posteriorMean';
+  let pbKey = 'hirst_bunker03';
+
+  const TE_CHOICES = [
+    ['posteriorMean', 'Posterior 4.91%'],
+    ['threePathway',  '3-pathway 3.90%'],
+    ['hdiLo',         'HDI low 2.43%'],
+    ['textbook',      'Textbook 10%']
+  ];
+
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function doyLabel(d) {
+    const date = new Date(2025, 0, 1);
+    date.setDate(d);
+    return d + ' · ' + MONTHS[date.getMonth()];
+  }
+
+  function paintTrack(el) {
+    const pct = ((el.value - el.min) / (el.max - el.min)) * 100;
+    el.style.setProperty('--fill', pct + '%');
+  }
+
+  /* build the two segmented controls from the model itself */
+  $('#teSeg').innerHTML = TE_CHOICES.map(([k, label]) =>
+    `<button type="button" data-te="${k}" aria-pressed="${k === teKey}">${label}</button>`).join('');
+
+  $('#pbSeg').innerHTML = Object.keys(T.pbModels).map(k =>
+    `<button type="button" data-pb="${k}" aria-pressed="${k === pbKey}">${T.pbModels[k].label}</button>`).join('');
+
+  const fmt = (v, d) => {
+    if (!isFinite(v)) return '—';
+    if (Math.abs(v) >= 1000) return v.toFixed(0);
+    if (Math.abs(v) < 0.001 && v !== 0) return v.toExponential(2);
+    return v.toFixed(d === undefined ? 2 : d);
+  };
+
+  function update() {
+    const sst = parseFloat(inputs.sst.value);
+    const chl = parseFloat(inputs.chl.value);
+    const par = parseFloat(inputs.par.value);
+    const kd  = parseFloat(inputs.kd.value);
+    const lat = parseFloat(inputs.lat.value);
+    const doy = parseInt(inputs.doy.value, 10);
+    const tl  = parseFloat(inputs.tl.value);
+
+    $('#outSst').textContent = sst.toFixed(1) + ' °C';
+    $('#outChl').textContent = chl.toFixed(2) + ' mg/m³';
+    $('#outPar').textContent = par.toFixed(0) + ' mol/m²/d';
+    $('#outKd').textContent  = kd.toFixed(3) + ' m⁻¹';
+    $('#outLat').textContent = lat.toFixed(1) + ' °N';
+    $('#outDoy').textContent = doyLabel(doy);
+    $('#outTl').textContent  = tl.toFixed(2);
+    Object.values(inputs).forEach(paintTrack);
+
+    const te = T.te[teKey];
+    const r = T.chain({ sst, chl, par, kd490: kd, lat, doy, tlFish: tl, te, pbModel: pbKey });
+
+    // Tier 1
+    $('#valPP').textContent    = fmt(r.pp, 0);
+    $('#valZeu').textContent   = fmt(r.zeu, 1);
+    $('#valPbopt').textContent = fmt(r.pbopt, 3) + ' mg C (mg Chl)⁻¹ h⁻¹';
+    $('#valDayl').textContent  = fmt(r.daylength, 2) + ' h';
+    $('#valPPe').textContent   = fmt(r.ppEppley, 0) + ' mg C m⁻² d⁻¹';
+    $('#satNote').textContent  = sst > 28.5
+      ? 'SST is above 28.5 °C, where the standard VGPM P_opt saturates at 4.0. The Eppley variant above does not saturate — report both.'
+      : '';
+
+    // Tier 2
+    $('#valPBM').textContent = fmt(r.pbm, 3);
+    $('#valZBM').textContent = fmt(r.zbm, 3);
+
+    // Tier 3
+    $('#valPBr').textContent = fmt(r.pbRatio, 3);
+    $('#valSP').textContent  = fmt(r.sp, 3);
+    const m = T.pbModels[pbKey];
+    $('#rangeNote').innerHTML = r.pbOutOfRange
+      ? `<span style="color:var(--coral)">SST ${sst.toFixed(1)} °C is outside this model's calibration range (${m.valid[0]} to ${m.valid[1]} °C) — extrapolation.</span>`
+      : `<span style="color:var(--fg-faint)">Within calibration range ${m.valid[0]} to ${m.valid[1]} °C.</span>`;
+    $('#pbNote').textContent = m.note;
+
+    // Tier 4
+    $('#valPFP').textContent = fmt(r.pfp, 4);
+    $('#valPY').textContent  = fmt(r.py, 4);
+    $('#valGap').textContent = fmt(r.tlGap, 2) + ' trophic levels';
+    $('#valTEp').textContent = Math.pow(te, r.tlGap).toExponential(3);
+  }
+
+  /* ---- provenance table, built from the model definition ---- */
+  const EQ_ROWS = [
+    ['1', 'PP = 0.66125 · P_opt(SST) · E₀/(E₀+4.1) · Z_eu · Chl · D', 'Behrenfeld &amp; Falkowski (1997) VGPM', 'applied, unmodified'],
+    ['1', 'P_opt = 1.54 · 10^(0.0275·SST − 0.07)', 'Eppley-VGPM', 'applied as sensitivity'],
+    ['2', 'PBM = 1.312 − 0.020·SST + 1.072·Chl', 'Marjuk et al. (2025) RSMA 90:104425', 'applied, unmodified'],
+    ['2', 'ZBM = 1.201 + 0.693·Chl + 1.119·PBM', 'Marjuk et al. (2025)', 'applied, unmodified'],
+    ['3', 'log₁₀(g) = a + b·log₁₀(BW) + c·T', 'Hirst &amp; Bunker (2003); two alternatives carried', 'applied, pixel-wise'],
+    ['3', 'PFP = SP · TE^(TL_fish − TL_zoo)', 'Ryther (1969); Pauly &amp; Christensen (1995)', 'TE estimated here'],
+    ['4', 'PY = PFP · E,  E = 0.5', 'Gulland (1971)', 'applied']
+  ];
+  $('#eqTable').innerHTML = EQ_ROWS.map(([tier, eq, src, status]) => {
+    const est = /estimated/.test(status);
+    return `<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:var(--s-3);font-family:var(--font-mono);font-size:.8125rem;color:var(--cyan)">${tier}</td>
+      <td style="padding:var(--s-3);font-family:var(--font-mono);font-size:.75rem;color:var(--fg-soft);overflow-wrap:anywhere">${eq}</td>
+      <td style="padding:var(--s-3);font-size:.8125rem;color:var(--fg-muted)">${src}</td>
+      <td style="padding:var(--s-3);font-family:var(--font-mono);font-size:.6875rem;color:${est ? 'var(--amber)' : 'var(--green)'}">${status}</td>
+    </tr>`;
+  }).join('');
+
+  /* ---- ML benchmark bars ---- */
+  const ML = {
+    trawl: [
+      ['extra trees', 0.280], ['random forest', 0.267], ['grad boosting', 0.133],
+      ['neural net', 0.131], ['ridge', 0.082], ['linear', 0.073],
+      ['null (mean)', -0.026], ['stacked', -0.380]
+    ],
+    longline: [
+      ['extra trees', 0.068], ['random forest', 0.030], ['null (mean)', -0.005],
+      ['stacked', -0.024], ['ridge', -0.065], ['grad boosting', -0.226],
+      ['neural net', -0.255], ['linear', -0.328]
+    ]
+  };
+  function renderML(el, rows) {
+    const max = 0.30;
+    el.innerHTML = rows.map(([name, r2]) => {
+      const pos = r2 > 0;
+      const w = Math.min(100, Math.abs(r2) / max * 100);
+      return `<div class="prob" style="grid-template-columns:104px 1fr 54px">
+        <span>${name}</span>
+        <span class="prob-bar"><span style="width:${w.toFixed(1)}%;background:${
+          pos ? 'linear-gradient(90deg,var(--cyan),var(--teal))' : 'var(--coral)'}"></span></span>
+        <span class="prob-val">${r2.toFixed(3)}</span>
+      </div>`;
+    }).join('');
+  }
+  renderML($('#mlTrawl'), ML.trawl);
+  renderML($('#mlLongline'), ML.longline);
+
+  /* ---- wiring ---- */
+  Object.values(inputs).forEach(el => el.addEventListener('input', update));
+
+  $('#teSeg').addEventListener('click', e => {
+    const b = e.target.closest('[data-te]');
+    if (!b) return;
+    teKey = b.dataset.te;
+    document.querySelectorAll('[data-te]').forEach(x =>
+      x.setAttribute('aria-pressed', String(x === b)));
+    update();
+  });
+
+  $('#pbSeg').addEventListener('click', e => {
+    const b = e.target.closest('[data-pb]');
+    if (!b) return;
+    pbKey = b.dataset.pb;
+    document.querySelectorAll('[data-pb]').forEach(x =>
+      x.setAttribute('aria-pressed', String(x === b)));
+    update();
+  });
+
+  $('#btnReset').addEventListener('click', () => {
+    inputs.sst.value = 28; inputs.chl.value = 1.5; inputs.par.value = 45;
+    inputs.kd.value = 0.15; inputs.lat.value = 12; inputs.doy.value = 15;
+    inputs.tl.value = 3.672;
+    teKey = 'posteriorMean'; pbKey = 'hirst_bunker03';
+    document.querySelectorAll('[data-te]').forEach(x =>
+      x.setAttribute('aria-pressed', String(x.dataset.te === teKey)));
+    document.querySelectorAll('[data-pb]').forEach(x =>
+      x.setAttribute('aria-pressed', String(x.dataset.pb === pbKey)));
+    update();
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>
